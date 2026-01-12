@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<head>
+<script>
+  //loginChange();
+  var data = {};
+  
+  const { clipboard } = require('electron');
+  
+  window.execute = function(script) {
+      console.log("Execute script:", script);
+      // alert("Execution is disabled in UI-only mode.");
+  }
+  
+  window.inject = function() {
+      console.log("Inject pressed");
+      // alert("Injection is disabled in UI-only mode.");
+  }
+  
+  window.getClipboardContents = function() {
+      return clipboard.readText();
+  }
+  
+  window.executeButton = window.execute; // Alias for some buttons using executeButton
+</script>
+<!-- <script src="script-ware-funcs.js"></script> -->
+<script src="scriptfiles.js"></script>
+<html>
+<script>
+window.$ = window.jQuery = require('./jquery.min.js');
+window.monaco = require("./monaco-loader.js");
+window.path = require("path");
+</script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+<!--<script type="text/javascript" src="https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/loader.js"></script>-->
+<script src="https://kit.fontawesome.com/79a051c784.js" crossorigin="anonymous"></script>
+<style type="text/css">
+  #tabs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: hidden;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  #tabs li {
+    border-radius: 3px 3px 0px 0px;
+    float: left;
+    display: block;
+    padding: 1px;
+    background-color: #4a4a4a;
+    margin-right: 2px;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  #tabs li a {
+    margin-left: 4px;
+    margin-right: 4px;
+    color: #fff;
+    text-decoration: none;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  #tabs li.current {
+    background-color: #6b6b6b;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  #tabs li.current a {
+    color: #000;
+    text-decoration: none;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  #tabs li a.remove {
+    color: #bbb;
+    margin-left: 10px;
+    font-family: arial;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  #tabs li.current a.remove {
+    color: #bbb;
+    margin-left: 10px;
+    font-family: arial;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+
+  /* Editable tab title styles */
+  #tabs .tab-title {
+    display: inline-block;
+    min-width: 20px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  #tabs .tab-title.editing {
+    background: #3d3d3d;
+    border: 1px solid #525252;
+    padding: 1px 4px;
+    border-radius: 3px;
+    outline: none;
+    user-select: text;
+    -webkit-user-select: text;
+    color: #fff;
+  }
+</style>
+
+<style>
+  .lib {
+    background-color: rgb(44, 44, 44);
+    /* Green */
+    border: none;
+    color: white;
+    padding-top: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 11px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+  }
+
+  .lib:hover {
+    background-color: grey;
+    /* Green */
+    color: white;
+  }
+
+  .lib-text {
+    color: #e0e0e0;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .lib-text:hover {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255,255,255,0.3);
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  /* The Modal (background) */
+  .modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+  }
+
+  /* Modal Content */
+  .modal-content {
+    border-radius: 12px;
+    background-color: #f7f7f7;
+    margin: auto;
+    padding: 10px;
+    border: 1px solid #888;
+    width: 450px;
+    height: 240px;
+    margin-top: -2px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+  /* output */
+  .output {
+    bottom: 36px;
+    position: absolute;
+    right: 8px;
+    color: #aaaaaa;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .output:hover,
+  .output:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .credits {
+    bottom: 8px;
+    position: absolute;
+    right: 8px;
+    color: #aaaaaa;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .credits:hover,
+  .credits:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* The Close Button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .miau:active {
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  input, button, textarea, :focus {
+    outline: none;
+}
+  /* Apple-style Easing Animations */
+  @keyframes fadeInSlideDown {
+    0% { opacity: 0; transform: translateY(-15px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInSlideUp {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInZoom {
+    0% { opacity: 0; transform: scale(0.99); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  
+  @keyframes iconPop {
+    0% { opacity: 0; transform: scale(0.5) rotate(-15deg); }
+    60% { transform: scale(1.1) rotate(0deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  #tabcont {
+    animation: fadeInSlideDown 0.8s cubic-bezier(0.2, 0, 0, 1) 0.3s forwards;
+    opacity: 0;
+  }
+
+  #container {
+    animation: fadeInZoom 0.8s cubic-bezier(0.2, 0, 0, 1) 0.5s forwards;
+    opacity: 0;
+  }
+
+  #bottom-bar {
+    animation: fadeInSlideUp 0.8s cubic-bezier(0.2, 0, 0, 1) 0.7s forwards;
+    opacity: 0;
+  }
+
+  .miau {
+    animation: iconPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s forwards; /* Springy pop */
+    opacity: 0;
+    transition: transform 0.2s ease;
+  }
+  
+  .miau:hover {
+    transform: scale(1.2);
+  }
+</style>
+</head>
+
+<body style="background-color:rgb(44,44,44);margin: 2px; height: 100%; overflow: hidden;">
+  <script type="text/javascript">
+  function U2A(str) {
+    return unescape(encodeURIComponent(str));
+  }
+
+  var dragTimer;
+  var scripts = {};
+
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  // Debounced save - only saves after user stops typing
+  var saveTimeout = null;
+  function debouncedSave() {
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(saveTabs, 1500);
+  }
+  // LZ-String compression (minimal) for large scripts
+  var LZString={compress:function(o){if(null==o)return"";var r,e,t,n,i,a,s={},u={},c="",p="",f="",l=2,h=3,d=2,g=[],m=0,v=0;for(t=0;t<o.length;t+=1)if(c=o.charAt(t),Object.prototype.hasOwnProperty.call(s,c)||(s[c]=h++,u[c]=!0),p=f+c,Object.prototype.hasOwnProperty.call(s,p))f=p;else{if(Object.prototype.hasOwnProperty.call(u,f)){if(256>f.charCodeAt(0)){for(r=0;d>r;r++)m<<=1,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++;for(e=f.charCodeAt(0),r=0;8>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1}else{for(e=1,r=0;d>r;r++)m=m<<1|e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e=0;for(e=f.charCodeAt(0),r=0;16>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1}0==--l&&(l=Math.pow(2,d),d++),delete u[f]}else for(e=s[f],r=0;d>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1;0==--l&&(l=Math.pow(2,d),d++),s[p]=h++,f=String(c)}if(""!==f){if(Object.prototype.hasOwnProperty.call(u,f)){if(256>f.charCodeAt(0)){for(r=0;d>r;r++)m<<=1,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++;for(e=f.charCodeAt(0),r=0;8>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1}else{for(e=1,r=0;d>r;r++)m=m<<1|e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e=0;for(e=f.charCodeAt(0),r=0;16>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1}0==--l&&(l=Math.pow(2,d),d++),delete u[f]}else for(e=s[f],r=0;d>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1;0==--l&&(l=Math.pow(2,d),d++)}for(e=2,r=0;d>r;r++)m=m<<1|1&e,15==v?(v=0,g.push(String.fromCharCode(m)),m=0):v++,e>>=1;for(;;){if(m<<=1,15==v){g.push(String.fromCharCode(m));break}v++}return g.join("")},decompress:function(o){if(null==o)return"";if(""==o)return null;var r,e,t,n,i,a,s,u=[],c=4,p=4,f=3,l="",h=[],d={val:o.charCodeAt(0),position:32768,index:1};for(r=0;3>r;r+=1)u[r]=r;for(t=0,i=Math.pow(2,2),a=1;a!=i;)n=d.val&d.position,d.position>>=1,0==d.position&&(d.position=32768,d.val=o.charCodeAt(d.index++)),t|=(n>0?1:0)*a,a<<=1;switch(t){case 0:for(t=0,i=Math.pow(2,8),a=1;a!=i;)n=d.val&d.position,d.position>>=1,0==d.position&&(d.position=32768,d.val=o.charCodeAt(d.index++)),t|=(n>0?1:0)*a,a<<=1;s=String.fromCharCode(t);break;case 1:for(t=0,i=Math.pow(2,16),a=1;a!=i;)n=d.val&d.position,d.position>>=1,0==d.position&&(d.position=32768,d.val=o.charCodeAt(d.index++)),t|=(n>0?1:0)*a,a<<=1;s=String.fromCharCode(t);break;case 2:return""}for(u[3]=s,e=s,h.push(s);;){if(d.index>o.length)return"";for(t=0,i=Math.pow(2,f),a=1;a!=i;)n=d.val&d.position,d.position>>=1,0==d.position&&(d.position=32768,d.val=o.charCodeAt(d.index++)),t|=(n>0?1:0)*a,a<<=1;switch(s=t){case 0:for(t=0,i=Math.pow(2,8),a=1;a!=i;)n=d.val&d.position,d.position>>=1,0==d.position&&(d.position=32768,d.val=o.charCodeAt(d.index++)),t|=(n>0?1:0)*a,a<<=1;u[p++]=String.fromCharCode(t),s=p-1,c--;break;case 1:for(t=0,i=Math.pow(2,16),a=1;a!=i;)n=d.val&d.position,d.position>>=1,0==d.position&&(d.position=32768,d.val=o.charCodeAt(d.index++)),t|=(n>0?1:0)*a,a<<=1;u[p++]=String.fromCharCode(t),s=p-1,c--;break;case 2:return h.join("")}if(0==c&&(c=Math.pow(2,f),f++),u[s])l=u[s];else{if(s!==p)return null;l=e+e.charAt(0)}h.push(l),u[p++]=e+l.charAt(0),c--,e=l,0==c&&(c=Math.pow(2,f),f++)}}};
+
+  // Minimal save function with compression
+  function saveTabs() {
+    if (saveTimeout) { clearTimeout(saveTimeout); saveTimeout = null; }
+    if (!window.editor) return;
+    
+    var currentTabId = $('#tabs li.current').find('a.tab').attr('id');
+    if (currentTabId) {
+      scripts[currentTabId] = window.editor.getValue();
+    }
+    
+    var tabData = [];
+    $('#tabs li').each(function() {
+      var tabId = $(this).find('a.tab').attr('id');
+      if (tabId && tabId !== 'addtab') {
+        var content = scripts[tabId] || '';
+        var title = tabTitles[tabId] || '';
+        if (content.trim().length > 0 || tabId === 'ScriptWare') {
+          tabData.push({ id: tabId, content: content, title: title });
+        }
+      }
+    });
+    
+    if (tabData.length > 0) {
+      try {
+        var jsonData = JSON.stringify(tabData);
+        var compressed = LZString.compress(jsonData);
+        localStorage.setItem('sw_tabs_lz', compressed);
+        localStorage.setItem('scriptware_current_tab', currentTabId || '');
+        console.log('Saved', tabData.length, 'tabs (' + Math.round(compressed.length/1024) + 'KB compressed)');
+      } catch (e) {
+        console.error('Save failed:', e);
+        alert('Script too large to save! Try splitting into smaller tabs.');
+      }
+    }
+  }
+
+  // Load tabs from localStorage (with compression support)
+  var isLoading = false;
+  function loadTabs() {
+    var currentTab = localStorage.getItem('scriptware_current_tab');
+    var tabData = null;
+    
+    // Try compressed format first
+    var compressed = localStorage.getItem('sw_tabs_lz');
+    if (compressed) {
+      try {
+        var decompressed = LZString.decompress(compressed);
+        if (decompressed) {
+          tabData = JSON.parse(decompressed);
+        }
+      } catch (e) {
+        console.log('Decompress error:', e);
+      }
+    }
+    
+    // Fallback to old uncompressed format
+    if (!tabData) {
+      var oldData = localStorage.getItem('scriptware_tabs');
+      if (oldData) {
+        try {
+          tabData = JSON.parse(oldData);
+          localStorage.removeItem('scriptware_tabs'); // Clean up old format
+        } catch (e) {}
+      }
+    }
+    
+    if (tabData && tabData.length > 0) {
+      isLoading = true;
+      tabData.forEach(function(tab) {
+        scripts[tab.id] = tab.content || '';
+        tabTitles[tab.id] = tab.title || '';
+        addTab(tab.id, tab.title);
+      });
+      isLoading = false;
+      
+      if (currentTab && $('#' + currentTab).length > 0) {
+        $('#tabs li').removeClass('current');
+        $('#' + currentTab).parent().addClass('current');
+        window.editor.setValue(scripts[currentTab] || '');
+      } else if (tabData.length > 0) {
+        var firstTabId = tabData[0].id;
+        window.editor.setValue(scripts[firstTabId] || '');
+      }
+      console.log('Loaded', tabData.length, 'tabs');
+      return true;
+    }
+    return false;
+  }
+
+  // Flag to track if we already loaded tabs
+  var tabsLoaded = false;
+
+  $(document).ready(function () {
+    // Just add the icon - tabs will be loaded after Monaco is ready
+    $("#tabs").append(`
+                <img class='miau' style="float:right;" src="AppIcon.png" width="20px">`);
+  });
+
+  // Save only before window closes
+  $(window).on('beforeunload', saveTabs);
+
+  var tabsopen = 0;
+
+  // Tab titles storage
+  var tabTitles = {};
+
+  function addTab(link, title) {
+    // If tab already exist in the list, return
+    if ($("#" + link).length != 0)
+      return;
+
+    if (link != "ScriptWare" && !isLoading && window.editor) {
+      var currentId = $("#tabs li.current").find("a.tab").attr("id");
+      if (currentId) scripts[currentId] = window.editor.getValue();
+    }
+    // hide other tabs
+    $("#tabs li").removeClass("current");
+
+    $("#addtab").parent().remove();
+    
+    // Determine label - use random string ID as default (like original)
+    var label = title || tabTitles[link] || (link == "ScriptWare" ? "Script-Ware M" : link);
+    tabTitles[link] = label;
+
+    // add new tab with editable title
+    if (link == "ScriptWare") {
+      $("#tabs").append("<li class='current'><a class='tab' id='" +
+        link + "' href='#'><span class='tab-title' style='font-family:arial;color:#e3e3e3;font-size:12px;'>" + label +
+        "</span></a></li>");
+    } else {
+      $("#tabs").append("<li class='current'><a class='tab' id='" +
+        link + "' href='#'><span class='tab-title' style='font-family:arial;color:#e3e3e3;font-size:12px;'>" + label +
+        "</span></a><a href='#' class='remove'>&times;</a></li>");
+
+      if (!isLoading) {
+        scripts[link] = "";
+        if (window.editor) window.editor.setValue("");
+      }
+    }
+
+    tabsopen = $("#tabs li").length;
+    // Always show add button
+    $("#tabs").append("<li class='addtabber'><a href='#' id='addtab' class='add'>+</a></li>");
+
+    var objDiv = document.getElementById("tabcont");
+    objDiv.scrollTop = objDiv.scrollHeight;
+  }
+
+  // Event delegation - handlers attached once to parent (not inside addTab)
+  $(document).on('click', '#tabs a.add', function () {
+    addTab(makeid(10));
+    saveTabs();
+  });
+
+  $(document).on('click', '#tabs a.tab', function () {
+    // Save current tab's content before switching
+    var currentTabId = $("#tabs li.current").find("a.tab").attr("id");
+    if (currentTabId && window.editor) {
+      scripts[currentTabId] = window.editor.getValue();
+    }
+    
+    // Get the new tab name
+    var newTabId = $(this).attr("id");
+    var contentname = newTabId + "_content";
+
+    // hide all other tabs
+    $("#content p").hide();
+    $("#tabs li").removeClass("current");
+
+    // show current tab
+    $("#" + contentname).show();
+    $(this).parent().addClass("current");
+
+    // Load the new tab's content
+    window.editor.setValue(scripts[newTabId] || '');
+    saveTabs();
+  });
+
+  $(document).on('click', '#tabs a.remove', function () {
+    var tabElement = $(this).parent();
+    var tabid = tabElement.find(".tab").attr("id");
+
+    // Remove from scripts and titles
+    delete scripts[tabid];
+    delete tabTitles[tabid];
+
+    tabElement.remove();
+
+    // if there is no current tab and if there are still tabs left, show the first one
+    if ($("#tabs li.current").length == 0 && $("#tabs li").length > 0) {
+      var firsttab = $("#tabs li:first-child");
+      firsttab.addClass("current");
+
+      var firstTabId = firsttab.find("a.tab").attr("id");
+      window.editor.setValue(scripts[firstTabId] || '');
+    }
+
+    tabsopen = $("#tabs li").length - 1;
+    saveTabs();
+  });
+
+  // Double-click to rename tab
+  $(document).on('dblclick', '#tabs .tab-title', function (e) {
+    e.stopPropagation();
+    var titleElement = $(this);
+    var tabLink = titleElement.closest('a.tab');
+    var tabId = tabLink.attr('id');
+    
+    // Don't allow renaming the default ScriptWare tab
+    if (tabId === 'ScriptWare') return;
+    
+    var originalTitle = titleElement.text();
+    
+    titleElement.attr('contenteditable', 'true');
+    titleElement.addClass('editing');
+    titleElement.focus();
+    
+    // Select all text
+    var range = document.createRange();
+    range.selectNodeContents(titleElement[0]);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    
+    function finishEditing() {
+      titleElement.attr('contenteditable', 'false');
+      titleElement.removeClass('editing');
+      var newTitle = titleElement.text().trim();
+      if (newTitle && newTitle !== originalTitle) {
+        tabTitles[tabId] = newTitle;
+        saveTabs();
+      } else {
+        titleElement.text(originalTitle);
+      }
+    }
+    
+    titleElement.on('blur.editing', function() {
+      finishEditing();
+      titleElement.off('.editing');
+    });
+    
+    titleElement.on('keydown.editing', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        finishEditing();
+        titleElement.off('.editing');
+      }
+      if (e.key === 'Escape') {
+        titleElement.text(originalTitle);
+        finishEditing();
+        titleElement.off('.editing');
+      }
+    });
+  });
+</script>
+  <div id="tabcont" style="overflow: auto; width: 100%; height: 20px;">
+    <ul id="tabs">
+      <!-- Tabs go here -->
+    </ul>
+  </div>
+  <div id="dropzone" class="modal"
+    style="border: 2px dashed black; resize: vertical;overflow: auto;width:calc(100%);height: calc(90vh); ">
+    <center>
+      <div style="width:100%;height:100%;display: flex;
+  justify-content: center;
+  align-items: center;">
+        <font face="arial" style="color:white;">Drop script here<br><input type="file" widht="200px" height="200px"
+            id="input-file"></font>
+      </div>
+    </center>
+  </div>
+  <div id="container" style="overflow: hidden;width:calc(100% - 2);height: calc(100vh - 50px);border:1px solid #6b6b6b">
+  </div>
+  <div id="bottom-bar" style="user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;">&nbsp;&nbsp;<i onclick="execute(window.editor.getValue())" style="cursor:pointer;padding-top:4px;color:green;user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;" class="fa fa-play"></i>&nbsp;&nbsp;<i onclick="
+          	window.editor.setValue(getClipboardContents())" style="cursor:pointer;padding-top:4px;color:#ffe1bd;user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;" class="fa fa-paste"></i>&nbsp;&nbsp;<i onclick="
+          	window.editor.setValue('')" style="cursor:pointer;padding-top:4px;color:#ffbdbd;user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;" class="fa fa-trash"></i>
+    <button class="lib" style="float:right; padding: 4px 8px; user-select: none;" id="myBtn">Utilities & Library</button>
+    <button onclick="closeutil(); execute(scriptFiles.dex);" class="lib" style="float:right; padding: 4px 8px; margin-right: 3px; user-select: none;">Dex by Moon</button>
+    <button id="ticker" class="lib" style="float:right; display:none;"></button></div>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" style="padding-left:10px;">&times;</span>
+      <span class="output" style=""><i
+          onclick="closeutil(); require('electron').shell.showItemInFolder(path.join(require('os').homedir(), '/Documents/Script-Ware/log.diag'));"
+          class="fa fa-window-maximize"></i></span>
+      <span class="credits" style=""><i
+          onclick="closeutil(); require('electron').shell.openExternal('https://github.com/Mars7383/SWM-UIs');"
+          class="fa fa-question-circle"></i></span>
+      <!--<button onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/iy.lua'))`));" >Infinite Yield</button>
+            <button onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/remotespy.lua'))`));" >Remote Spy</button>
+            <button onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/esp.lua'))`);" >ESP</button>
+            <button  onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/clicktp.lua'))`));" >Click to TP</button>
+            <button  onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/roxploit.lua'))`));" >RoXploit 6.0</button>
+            <button  onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/owlhub.lua'))`));" >Owl Hub</button>
+            <button  onclick="executeButton(btoa(`local l_spawn = function(b) spawn(loadstring(b)) end l_spawn(game:HttpGet('https://cdn.calamari.cc/scripts/fly.lua'))`));" >Fly</button>
+          -->
+      <button onmouseover="this.style['background-color']='#e8e8e8';"
+        onmouseout="this.style['background-color']='#f2f2f2';" style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding: 0px;
+  height: 230px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 16px;
+  width: 130px;
+  margin: 4px 2px;
+  cursor: pointer;">
+        <center>
+          <div
+            onclick="closeutil(); execute(scriptFiles.saveInstance);">
+            <img
+              onclick="closeutil(); execute(scriptFiles.saveInstance);"
+              width="80px" height="80px" src="saveinstance.png">
+            <br>
+            <b
+              onclick="closeutil(); execute(scriptFiles.saveInstance);">Save
+              Place</b>
+            <br>
+            <p onclick="closeutil(); execute(scriptFiles.saveInstance);"
+              style="font-size:9px; width: 120px;  text-align: justify;
+  text-justify: inter-word;">
+              The most accurate place-saver ever. Written by Moon. Save Meshes and UnionOperations featuring collisions,
+              LocalScripts and ModuleScripts, and more. The entire game exported.
+            </p>
+          </div>
+          <input type="checkbox" id="decompilescripts"
+            name="decompilescripts" style="vertical-align: middle;">
+          <label for="decompilescripts" style="font-size:11px; color: #5c5c5c; vertical-align: middle;" id="trol">decompile scripts</label><br>
+        </center>
+      </button>
+      <div style="
+  float:right;
+  padding-top:1px;
+  padding-right:5px;
+   margin-right:0px;
+   border-right:1px solid #ccc;height:100%">
+        <button onclick="closeutil(); execute(scriptFiles.unlockFps);"
+          onmouseover="this.style['background-color']='#e8e8e8';" onmouseout="this.style['background-color']='#f2f2f2';"
+          style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding: 5px;
+  height: 30px;
+  width: 130px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  cursor: pointer;">
+          Unlock FPS
+        </button>
+        <br>
+        <button
+          onclick="closeutil(); execute(scriptFiles.streamSniper);"
+          onmouseover="this.style['background-color']='#e8e8e8';" onmouseout="this.style['background-color']='#f2f2f2';"
+          style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding: 5px;
+  height: 30px;
+  width: 130px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;">
+          Stream Sniper
+        </button>
+        <br>
+        <button
+          onclick="closeutil(); execute(scriptFiles.owlhub);"
+          onmouseover="this.style['background-color']='#e8e8e8';" onmouseout="this.style['background-color']='#f2f2f2';"
+          style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding: 5px;
+  height: 30px;
+  width: 130px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  cursor: pointer;"><img src="owlhub.png" width="14px" height="14px" style="vertical-align: middle;"> Owl Hub
+        </button>
+        <br>
+        <center>
+          <img src="azulttag.png" width="130px"><br>
+          <i style="font-family:times new roman; font-size: 14px;">Script-Ware M</i>
+          <p style="font-size: 8px; width: 130px; margin: 4px auto 0; text-align: center; line-height: 1.4;">
+            Created by Inspect. Thanks to<br>AzuLX, Moon, cook, Cammy,<br>Sigma, deima, and doot.
+          </p>
+        </center>
+      </div>
+
+      <div style="
+  float:right;
+   margin-right:5px;">
+        <button
+          onclick="closeutil();execute(scriptFiles.IY);"
+          onmouseover="this.style['background-color']='#e8e8e8';" onmouseout="this.style['background-color']='#f2f2f2';"
+          style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding-top:8px;
+  padding-right:12px;
+  height: 70px;
+  width: 130px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;">
+          <img width="80px" height="45px" src="IYlight.png">
+        </button>
+        <br>
+        <button
+          onclick="closeutil(); execute(scriptFiles.remoteSpy);"
+          onmouseover="this.style['background-color']='#e8e8e8';" onmouseout="this.style['background-color']='#f2f2f2';"
+          style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding: 0px;
+  height: 70px;
+  width: 130px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;">
+          <img width="30px" height="30px" src="filter.png"><br>
+          <font style="font-size:12px">RemoteSpy</font>
+        </button>
+        <br>
+        <button onclick="closeutil(); require('electron').shell.openPath('/Users/Shared/ScriptWare/Workspace/');"
+          onmouseover="this.style['background-color']='#e8e8e8';" onmouseout="this.style['background-color']='#f2f2f2';"
+          style="
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  color: black;
+  padding: 0px;
+  height: 74px;
+  width: 130px;
+  text-align: center;
+  text-decoration: none;
+    display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;">
+          <img width="16px" height="16px" src="workspace.png"><br>
+          <font style="font-size:10px">Open Workspace Folder</font>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function () {
+      modal.style.display = "block";
+    }
+
+    function closeutil() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+</body>
+<script>
+  function uriFromPath(_path) {
+    var pathName = path.resolve(_path).replace(/\\/g, '/');
+    if (pathName.length > 0 && pathName.charAt(0) !== '/') {
+        pathName = '/' + pathName;
+    }
+    return encodeURI('file://' + pathName);
+  }
+  monaco.require.config({
+    paths: {
+      'vs': uriFromPath(path.join(__dirname, './monaco-editor/min/vs')) //'monaco-editor/min/vs'
+    }
+  });
+  monaco.require(['vs/editor/editor.main'], function () {
+    window.editor = monaco.editor.create(document.getElementById('container'), {
+      value: [
+        ''
+      ].join('\n'),
+      language: 'lua',
+      theme: "vs-dark",
+      scrollbar: {
+        vertical: 'auto',
+        horizontal: 'auto'
+      },
+      minimap: {
+        enabled: false,
+      },
+      automaticLayout: true // the important part
+    });
+    var myBinding = window.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C, function () {
+      document.execCommand('copy')
+    });
+    var myBinding = window.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V, function () {
+      document.execCommand('paste')
+    });
+    var myBinding = window.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_X, function () {
+      document.execCommand('cut')
+    });
+
+    function syntaxError() {
+      //setTimeout(syntaxError, 200);
+      var s = window.editor.getValue();
+      compileTest(btoa(U2A(s))).then(function (err) {
+        if (err == "OK") {
+          monaco.editor.setModelMarkers(window.editor.getModel(), '', [{}])
+        } else {
+          var err = atob(err).split(":");
+          var line = err[1];
+          var stx = err[2];
+          monaco.editor.setModelMarkers(window.editor.getModel(), '', [{
+            startLineNumber: parseInt(line),
+            startColumn: 1,
+            endLineNumber: parseInt(line),
+            endColumn: 1000,
+            message: stx
+          }]);
+        }
+      });
+    };
+    // Hook into Monaco content changes for debounced auto-save
+    window.editor.onDidChangeModelContent(function() {
+      isDirty = true;
+      debouncedSave();
+    });
+
+    // Now load saved tabs after Monaco is ready
+    if (!tabsLoaded) {
+      tabsLoaded = true;
+      if (!loadTabs()) {
+        addTab("ScriptWare");
+      }
+    }
+
+    syntaxError();
+  });
+  $(function () {
+    /*
+     * this swallows backspace keys on any non-input element.
+     * stops backspace -> back
+     */
+    var rx = /INPUT|SELECT|TEXTAREA/i;
+
+    $(document).bind("keydown keypress", function (e) {
+      if (e.which == 8) { // 8 == backspace
+        if (!rx.test(e.target.tagName) || e.target.disabled || e.target.readOnly) {
+          e.preventDefault();
+        }
+      }
+    });
+  });
+
+  function save() {
+    // get the value of the data
+    var value = window.editor.getValue()
+    saveValueSomewhere(value);
+  }
+
+  $(document).on('dragover', function (e) {
+    var dt = e.originalEvent.dataTransfer;
+    if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('Files'))) {
+      $("#dropzone").show();
+      window.clearTimeout(dragTimer);
+    }
+  });
+
+  $(document).on('dragleave', function (e) {
+    dragTimer = window.setTimeout(function () {
+      $("#dropzone").hide();
+    }, 25);
+  });
+
+  function getFile(event) {
+    const input = event.target
+    console.log(input);
+    if ('files' in input && input.files.length > 0) {
+      placeFileContent(
+        input.files[0])
+    }
+  }
+
+  function placeFileContent(file) {
+    readFileContent(file).then(content => {
+      window.editor.setValue(content);
+
+      $("#dropzone").hide();
+    }).catch(error => console.log(error))
+  }
+
+  function setScript(content) {
+    window.editor.setValue(content);
+  }
+
+  function readFileContent(file) {
+    const reader = new FileReader()
+    return new Promise((resolve, reject) => {
+      reader.onload = event => resolve(event.target.result)
+      reader.onerror = error => reject(error)
+      reader.readAsText(file)
+    })
+  }
+
+  document.getElementById('input-file')
+    .addEventListener('change', getFile)
+
+  function executeScript() {
+    executeButton(btoa(U2A(window.editor.getValue())));
+  }
+
+  if (data["48hour"]) {
+    document.calamariStamp = data.tick;
+  }
+
+  function ticktock() {
+    var seconds = document.calamariStamp--;
+    var hours = Math.floor(document.calamariStamp / 3600);
+    var minutes = Math.floor((document.calamariStamp / 60) % 60);
+    var seconds = document.calamariStamp % 60;
+    var windows = hours + ":" + minutes + ":" + seconds + " remaining.";
+    document.getElementById("ticker").innerHTML = windows;
+    setTimeout(ticktock, 1000);
+  }
+  if (document.calamariStamp) {
+    ticktock();
+  }
+</script>
+</html>
